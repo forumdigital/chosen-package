@@ -659,6 +659,7 @@
 
     Chosen.prototype.setup = function() {
       this.form_field_jq = $(this.form_field);
+      this.is_first = true
       return this.current_selectedIndex = this.form_field.selectedIndex;
     };
 
@@ -1115,11 +1116,18 @@
         high.addClass("result-selected");
         item = this.results_data[high[0].getAttribute("data-option-array-index")];
         item.selected = true;
-        this.form_field.options[item.options_index - 1].selected = true;
         this.selected_option_count = null;
         if (this.is_multiple) {
+          this.form_field.options[item.options_index].selected = true;
           this.choice_build(item);
         } else {
+          if (this.current_selectedIndex === 0 && this.is_first){
+            this.form_field.options[item.options_index].selected = true;
+            this.is_first = false
+          }
+          else {
+            this.form_field.options[item.options_index - 1].selected = true;
+          }
           this.single_set_selected_text(this.choice_label(item));
         }
         if (!(this.is_multiple && (!this.hide_results_on_select || (evt.metaKey || evt.ctrlKey)))) {
@@ -1127,12 +1135,27 @@
           this.show_search_field_default();
         }
         if (this.is_multiple || this.form_field.selectedIndex !== this.current_selectedIndex) {
-          this.trigger_form_field_change({
-            selected: this.form_field.options[item.options_index - 1].value
-          });
+          if (this.is_multiple) {
+            this.trigger_form_field_change({
+              selected: this.form_field.options[item.options_index].value
+            });
+          }
+          else{
+            if (this.current_selectedIndex === 0 && this.is_first){
+              this.trigger_form_field_change({
+                selected: this.form_field.options[item.options_index].value
+              });
+            }
+            else {
+              this.trigger_form_field_change({
+                selected: this.form_field.options[item.options_index - 1].value
+              });
+            }
+          }
         }
         this.current_selectedIndex = this.form_field.selectedIndex;
         evt.preventDefault();
+
         return this.search_field_scale();
       }
     };
