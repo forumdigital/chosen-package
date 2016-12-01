@@ -1115,7 +1115,7 @@
         high.addClass("result-selected");
         item = this.results_data[high[0].getAttribute("data-option-array-index")];
         item.selected = true;
-        this.form_field.options[item.options_index].selected = true;
+        this.form_field.options[item.options_index - 1].selected = true;
         this.selected_option_count = null;
         if (this.is_multiple) {
           this.choice_build(item);
@@ -1128,7 +1128,7 @@
         }
         if (this.is_multiple || this.form_field.selectedIndex !== this.current_selectedIndex) {
           this.trigger_form_field_change({
-            selected: this.form_field.options[item.options_index].value
+            selected: this.form_field.options[item.options_index - 1].value
           });
         }
         this.current_selectedIndex = this.form_field.selectedIndex;
