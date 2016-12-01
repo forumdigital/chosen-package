@@ -304,6 +304,7 @@
 
     AbstractChosen.prototype.results_update_field = function() {
       this.set_default_text();
+      this.is_first_updated = true;
       if (!this.is_multiple) {
         this.results_reset_cleanup();
       }
@@ -659,7 +660,8 @@
 
     Chosen.prototype.setup = function() {
       this.form_field_jq = $(this.form_field);
-      this.is_first = true
+      this.is_first = true;
+      this.is_first_updated = false;
       return this.current_selectedIndex = this.form_field.selectedIndex;
     };
 
@@ -1121,9 +1123,10 @@
           this.form_field.options[item.options_index].selected = true;
           this.choice_build(item);
         } else {
-          if (this.current_selectedIndex === 0 && this.is_first){
+          if (
+              (this.current_selectedIndex === 0 && this.is_first) || this.is_first_updated
+          ){
             this.form_field.options[item.options_index].selected = true;
-            this.is_first = false
           }
           else {
             this.form_field.options[item.options_index - 1].selected = true;
@@ -1141,10 +1144,14 @@
             });
           }
           else{
-            if (this.current_selectedIndex === 0 && this.is_first){
+            if (
+                (this.current_selectedIndex === 0 && this.is_first) || this.is_first_updated
+            ){
               this.trigger_form_field_change({
                 selected: this.form_field.options[item.options_index].value
               });
+              this.is_first = false
+              this.is_first_updated = false
             }
             else {
               this.trigger_form_field_change({
